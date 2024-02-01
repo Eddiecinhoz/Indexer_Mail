@@ -19,6 +19,7 @@ type RespHandler struct {
     name    string
 }
 
+var host = ":3000"
 
 func main() {
     r := chi.NewRouter()
@@ -34,7 +35,8 @@ func main() {
       }))
     r.Get("/", verifyIndex)
     r.Post("/get_emails", getEmails)
-    http.ListenAndServe(":3000", r)
+    fmt.Printf("Api deployed on port %s", host)
+    http.ListenAndServe(host, r)
 }
 
 func verifyIndex(w http.ResponseWriter, r *http.Request){
