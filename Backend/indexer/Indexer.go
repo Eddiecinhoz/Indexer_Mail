@@ -24,7 +24,7 @@ const(
 	capacityOfChannelZinc		= 20
 	capacityOfChannelEmail 		= 500
 	capacityOfChannelInfo 		= 500
-	batchEmail 					= 100
+	batchEmail 					= 50
 )
 
 var numRoutinesToProcessEmail = make(chan struct{}, maxRoutinesToProcessEmail)
@@ -66,7 +66,7 @@ func main() {
 
 	//Create a resume with all relevant info from emails
 	waitEmailResume.Add(1)
-	go createEmailResume()
+	go createEmailResume(infoEmails)
 
 	//Process emails from directory and get relevant info
 	go routineToProcessEmails(emailsDirectory)
@@ -77,11 +77,13 @@ func main() {
 	close(infoEmails)
 	waitEmailResume.Wait()
 
-	fmt.Println("Duracion: ", time.Since(timeBegin))
-	fmt.Println("Inserted: ", countEmailInserted)
-	fmt.Println("Error formato: ", countEmailWrongFormat)
-	fmt.Println("Rechazados batch: ", countEmailRejected)
-	fmt.Println("Email to big: ", countEmailsBig)
+	fmt.Printf("Inserted:%d\n", countEmailInserted)
+	fmt.Printf("Error formato:%d\n", countEmailWrongFormat)
+	fmt.Printf("Rechazados batch:%d\n", countEmailRejected)
+	fmt.Printf("Email to big:%d\n", countEmailsBig)
+	fmt.Printf("\"\": %v\n", "")
+	fmt.Printf("Duracion:%s\n", time.Since(timeBegin))
+	fmt.Printf("\"\": %v\n", "")
 
 	
 	fmt.Println("End of process")
@@ -175,7 +177,7 @@ func emailWrongFormat(email string){
 	mutex.Unlock()
 }
 
-func createEmailResume(){
+func createEmailResume(infoEmails chan string){
 	defer waitEmailResume.Done()
 	emailsResume := strings.Builder{}
 	numberOfEmails := 0
