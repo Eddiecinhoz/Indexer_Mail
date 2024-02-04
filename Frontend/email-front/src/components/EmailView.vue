@@ -1,15 +1,15 @@
 <template>
     <div class="mx-w-screen-lg p-5">
-        <div class="flex justify-center w-full py-2">
-            <input v-model="filterConfig.text" class="w-10/12 border rounded-l-lg" placeholder="Search" @keydown="getEmails()">
-            <button class=" bg-indigo-500 py-2 px-10 text-white rounded-r-lg" @click="getEmails()">
-                <v-icon name="fa-search"></v-icon>
-            </button>
-        </div>
         <div class="grid grid-cols-2 pt-6">
             <div class="w-11/12 mx-auto">
-                <div class="rounded-md border-2 border-indigo-500 overflow-x-auto " style="max-height: 70vh; height: 70vh;">
-                    <table class=" border-separate w-full">
+                <div class="flex justify-center w-full py-2">
+                    <input v-model="filterConfig.text" class="w-11/12 border rounded-l-lg" placeholder="Search" @keydown="getEmails()">
+                    <button class=" bg-indigo-400 py-2 px-10 text-white rounded-r-lg" @click="getEmails()">
+                        <v-icon name="fa-search"></v-icon>
+                    </button>
+                </div>
+                <div class="rounded-md border-2 border-indigo-500 overflow-x-auto scroll-smoth scroll-eddie " style="max-height: 70vh; height: 70vh;">
+                    <table class=" border-collapse w-full">
                         <thead class="sticky top-0">
                             <tr class="bg-indigo-400 text-white">
                                 <th class="cursor-pointer w-1/4 max-w-1/4 py-2" v-for="column in tableColumns" @click="sortColumn(column)">
@@ -22,7 +22,7 @@
                         </thead>
                         <tbody v-if="!loadingMails">
                             <tr class="cursor-pointer hover:bg-gray-300" :class="highLightRowClass(email)" v-for="email in emails" @click="setEmail(email)">
-                                <td class="max-w-0 truncate">{{ email.from }}</td>
+                                <td class="max-w-0 truncate py-2">{{ email.from }}</td>
                                 <td class="max-w-0 truncate">{{ email.to }}</td>
                                 <td class="max-w-0 truncate">{{ email.subject }}</td>
                                 <td class="max-w-0 truncate">{{ email.directory }}</td>
@@ -44,8 +44,8 @@
             </div>
             <div class="flex flex-col justify-left my-auto size-full">
                 <template v-if="selectedEmail">
-                    <h2 class="text-xl font-bold ">{{ selectedEmail.subject }}</h2>
-                    <div class="rounded-lg border-2 border-indigo-500 w-11/12 h-5/6 my-auto p-6 h-f" style="max-height: 50vh; overflow-x: hidden;">
+                    <h2 class="text-xl font-bold py-5">{{ selectedEmail.subject }}</h2>
+                    <div class="rounded-lg border border-indigo-500 w-11/12 h-5/6 my-auto p-6 h-f scroll-eddie" style="max-height: 80vh; overflow-x: hidden;">
                         <p><b>From:</b> {{ selectedEmail.from }} </p>
                         <p><b>To:</b> {{ selectedEmail.to }} </p>
                         <br>
@@ -166,5 +166,23 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.scroll-eddie::-webkit-scrollbar {
+  width: 5px;
+  height: 10%;
+  display: block;
+}
 
+.scroll-eddie::-webkit-scrollbar-thumb {
+  background: #818CF8;
+  border-radius: 4px;
+  transition: background 0.3s, width 0.3s; /* Agrega transición para suavizar el cambio de color y ancho */
+
+  &:hover {
+    background: #6366F1;
+    box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+    ::-webkit-scrollbar{
+        width: 20px; /* Modifica el ancho al hacer hover */
+    }
+  }
+}
 </style>
