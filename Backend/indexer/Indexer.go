@@ -7,11 +7,11 @@ import (
 	"indexer/zincsearch"
 	"io"
 	"log"
+	_ "net/http/pprof"
 	"net/mail"
 	"os"
 	"runtime"
 	"runtime/pprof"
-	_ "net/http/pprof"
 	"strings"
 	"sync"
 	"time"
@@ -25,6 +25,8 @@ const(
 	capacityOfChannelEmail 		= 500
 	capacityOfChannelInfo 		= 500
 	batchEmail 					= 50
+	layout						="Mon, 02 Jan 2006 15:04:05 -0700 (MST)"
+	layout2						="Mon, 2 Jan 2006 15:04:05 -0700 (MST)"
 )
 
 var numRoutinesToProcessEmail = make(chan struct{}, maxRoutinesToProcessEmail)
@@ -165,9 +167,16 @@ func processEmail(email string){
 		emailWrongFormat(email)
 		return
 	}
-	infoEmails <- fmt.Sprintf(`{"_id": "%s", "directory": "%s",  "from": %s, "to": %s, "subject": %s, "content": %s}`, 
+
+	date, err:= time.Parse(layout, message.Header.Get("Date"))
+	if err != nil {
+		date,_ = time.Parse(layout2, message.Header.Get("Date"))
+	}
+	formatDate := date.Format(time.RFC3339)
+
+	infoEmails <- fmt.Sprintf(`{"_id": "%s", "directory": "%s",  "from": %s, "to": %s, "subject": %s, "content": %s, "date": "%s"}`, 
 	message.Header.Get("Message-ID"), email , fmt.Sprintf("%q", message.Header.Get("From")), fmt.Sprintf("%q", message.Header.Get("To")),
-	fmt.Sprintf("%q", message.Header.Get("Subject")), fmt.Sprintf("%q", strings.ReplaceAll(string(body),"\"", "'")))
+	fmt.Sprintf("%q", message.Header.Get("Subject")), fmt.Sprintf("%q", strings.ReplaceAll(string(body),"\"", "'")), formatDate)
 	
 }
 

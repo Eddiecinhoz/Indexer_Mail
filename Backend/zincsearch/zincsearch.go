@@ -1,13 +1,13 @@
 package zinc
 
 import (
-  "encoding/json"
-  "errors"
-  "fmt"
-  "io"
-  "log"
-  "net/http"
-  "strings"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"strings"
 )
 
 const(
@@ -19,6 +19,11 @@ const(
       "shard_num": 2,
       "mappings": {
         "properties": {
+			"date":{
+				"type": "date",
+				"index": true,
+				"store": false
+			},
 			"directory":{
 				"type": "text",
 				"index": false,
@@ -54,6 +59,7 @@ const(
 
 type (
 	Shit struct {
+		Date	string
 		Id      string `json:"_id"`
 		Directory string
 		Content string
